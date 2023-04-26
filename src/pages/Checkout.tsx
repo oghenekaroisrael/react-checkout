@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { getProducts } from "../api";
 import CartList from "../components/Cart/CartList";
 import ProductList from "../components/Product/ProductList";
 import { Product } from "../types";
+import { getProducts } from "../services/productService";
 
 const Checkout: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -11,8 +11,12 @@ const Checkout: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data: Product[] = await getProducts();
-        setProducts(data);
+        const {payload, error} = await getProducts();
+        if (payload) {
+          setProducts(payload.data);
+        } else {
+          window.alert(error);
+        }
       } catch (error) {
         console.error("Failed to fetch products:", error);
       }
